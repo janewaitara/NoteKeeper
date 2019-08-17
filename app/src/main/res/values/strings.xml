@@ -27,6 +27,7 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Preference Titles -->
+    <string name="general_header">General</string>
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
 
@@ -41,4 +42,28 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
+
+    <!-- Example General settings -->
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">Your Name</string>
+
+    <string name="pref_title_email_address">Email address</string>
+    <string name="pref_default_email_address">Yourname@yourhost.com</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+
+    <string name="pref_title_favorite_social">Favorite Social Network</string>
+    <string name="pref_default_favorite_social">http://plus.google.com</string>
+
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
 </resources>

@@ -35,6 +35,7 @@ public class SettingsActivity extends AppCompatActivity implements
                         }
                     }
                 });
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -64,6 +65,7 @@ public class SettingsActivity extends AppCompatActivity implements
                 getClassLoader(),
                 pref.getFragment());
         //args);
+
         fragment.setArguments(args);
         fragment.setTargetFragment(caller, 0);
         // Replace the existing Fragment with the new Fragment
@@ -80,6 +82,20 @@ public class SettingsActivity extends AppCompatActivity implements
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.header_preferences, rootKey);
+        }
+    }
+
+    public static class GeneralFragment extends PreferenceFragmentCompat {
+
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.general_preferences, rootKey);
+
+
+/*
+            findPreference("user_display_name");
+            findPreference("user_email_address");
+            findPreference("user_favorite_social");*/
         }
     }
 
