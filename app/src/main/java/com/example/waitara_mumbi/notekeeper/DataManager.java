@@ -1,5 +1,9 @@
 package com.example.waitara_mumbi.notekeeper;
 
+import android.database.sqlite.SQLiteDatabase;
+
+import com.example.waitara_mumbi.notekeeper.NoteKeeperDatabaseContract.CourseInfoEntry;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,11 +20,13 @@ public class DataManager {
     public static DataManager getInstance() {
         if(ourInstance == null) {
             ourInstance = new DataManager();
+
             ourInstance.initializeCourses();
             ourInstance.initializeExampleNotes();
         }
         return ourInstance;
     }
+
 
     public String getCurrentUserName() {
         return "Jim Wilson";

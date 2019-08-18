@@ -2,6 +2,7 @@ package com.example.waitara_mumbi.notekeeper;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -35,12 +36,18 @@ public class MainActivity extends AppCompatActivity
     private CourseRecyclerAdapter mCourseRecyclerAdapter;
     private GridLayoutManager mCoursesGridLayoutManager;
 
+    private NoteKeeperOpenHelper mDbOpenHelper;//member field of the openHelper //reference to the DBHELPER
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //instance of the DBHELPER
+        mDbOpenHelper = new NoteKeeperOpenHelper(this);
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +84,12 @@ public class MainActivity extends AppCompatActivity
 
         //updating the values in the nav header
         updateNavHeader();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mDbOpenHelper.close();//gets destroyed when activity is destroyed
+        super.onDestroy();
     }
 
     private void updateNavHeader() {
@@ -118,6 +131,9 @@ public class MainActivity extends AppCompatActivity
         mRecyclerItems.setLayoutManager(mNotesLayoutManager); //associating both
         mRecyclerItems.setAdapter(mNoteRecyclerAdapter);
 
+        //connecting to the database to create it
+        SQLiteDatabase db =  mDbOpenHelper.getReadableDatabase(); //connecting to our database
+
         selectNavigationMenuItem(R.id.nav_notes);
     }
 
@@ -128,12 +144,6 @@ public class MainActivity extends AppCompatActivity
         menu.findItem(id).setChecked(true); //shows that the menu item notes is selected when the app opens
     }
 
-    private void  displayCourses(){
-        mRecyclerItems.setLayoutManager(mCoursesGridLayoutManager);
-        mRecyclerItems.setAdapter(mCourseRecyclerAdapter);
-
-        selectNavigationMenuItem(R.id.nav_courses);
-    }
 
 
     @Override
@@ -191,6 +201,13 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void  displayCourses(){
+        mRecyclerItems.setLayoutManager(mCoursesGridLayoutManager);
+        mRecyclerItems.setAdapter(mCourseRecyclerAdapter);
+
+        selectNavigationMenuItem(R.id.nav_courses);
     }
 
     private void handleShare() {
