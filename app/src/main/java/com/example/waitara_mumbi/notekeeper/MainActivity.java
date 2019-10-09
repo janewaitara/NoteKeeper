@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //instance of the DBHELPER
+        //instance of the DBHELPER and assign it to a member field
         mDbOpenHelper = new NoteKeeperOpenHelper(this);
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -110,6 +110,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initializeDisplayContent() {
+        //connecting to the database using the queries
+        DataManager.loadFromDatabase(mDbOpenHelper);
         //getting the reference to the Recycler View
         mRecyclerItems = (RecyclerView) findViewById(R.id.list_items);
         //instance of layout Manager needed by recycler View
@@ -130,9 +132,6 @@ public class MainActivity extends AppCompatActivity
     private void displayNotes() {
         mRecyclerItems.setLayoutManager(mNotesLayoutManager); //associating both
         mRecyclerItems.setAdapter(mNoteRecyclerAdapter);
-
-        //connecting to the database to create it
-        SQLiteDatabase db =  mDbOpenHelper.getReadableDatabase(); //connecting to our database
 
         selectNavigationMenuItem(R.id.nav_notes);
     }

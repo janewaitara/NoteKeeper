@@ -1,6 +1,8 @@
 package com.example.waitara_mumbi.notekeeper;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +13,8 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import com.example.waitara_mumbi.notekeeper.NoteKeeperDatabaseContract.NoteInfoEntry;
 
 import java.util.List;
 
@@ -36,6 +40,11 @@ public class NoteActivity extends AppCompatActivity {
     private String mOriginalNoteCourseId;
     private String mOriginalNoteTitle;
     private String mOriginalNoteText;
+    private NoteKeeperOpenHelper mDbOpenHelper;
+    private Cursor mNoteCursor;
+    private int mCourseIdPos;
+    private int mNoteTitlePos;
+    private int mNoteTextPos;
 
 
     @Override
@@ -44,6 +53,8 @@ public class NoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_note);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mDbOpenHelper = new NoteKeeperOpenHelper(this);
 
         mSpinnerCourses = (Spinner)findViewById(R.id.spinner_courses);
 
@@ -70,10 +81,46 @@ public class NoteActivity extends AppCompatActivity {
         mTextNoteText = (EditText) findViewById(R.id.text_note_text);
 
         if(!mIsNewNote)
-            displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
+            loadNoteData();
+            //displayNote();
         Log.d(TAG, "onCreate");
 
     }
+
+    @Override
+    protected void onDestroy() {
+        mDbOpenHelper.close();
+        super.onDestroy();
+    }
+
+    private void loadNoteData() {
+        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();//connecting to Db to create
+
+        String courseId = "android_intents";
+        String titleStart ="dynamic";
+        //specifying selection criteria
+        String selection = NoteInfoEntry.COLUMN_COURSE_ID + " = ? AND " +
+                NoteInfoEntry.COLUMN_NOTE_TITLE + " LIKE ?";  //selection clause
+        String [] selectionArg = {courseId, titleStart + "%"};  //selection value
+
+
+        final String[] noteColumns = {
+                NoteInfoEntry.COLUMN_COURSE_ID,
+                NoteInfoEntry.COLUMN_NOTE_TITLE,
+                NoteInfoEntry.COLUMN_NOTE_TEXT};
+        mNoteCursor = db.query(NoteInfoEntry.TABLE_NAME,
+               noteColumns, selection, selectionArg, null, null, null);
+
+        //getting the position
+        mCourseIdPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
+        mNoteTitlePos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TITLE);
+        mNoteTextPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TEXT);
+
+        mNoteCursor.moveToNext();
+        displayNote();
+
+    }
+
     @Override //writing the instances into our Bundle
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState); //saving the state instances in case the activity is destroyed
@@ -130,12 +177,19 @@ public class NoteActivity extends AppCompatActivity {
         mNote.setText(mTextNoteText.getText().toString());
     }
 
-    private void displayNote(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
+    private void displayNote() {
+        //getting actual values from cursor in the loadData method
+        String courseId = mNoteCursor.getString(mCourseIdPos);
+        String noteTitle = mNoteCursor.getString(mNoteTitlePos);
+        String noteText = mNoteCursor.getString(mNoteTextPos);
+
+
         List<CourseInfo> courses = DataManager.getInstance().getCourses();//getting list of courses from DataManager
-        int courseIndex = courses.indexOf(mNote.getCourse());//getting index of the course from our notes / position of notes from spinner list
-        spinnerCourses.setSelection(courseIndex);
-        textNoteTitle.setText(mNote.getTitle());
-        textNoteText.setText(mNote.getText());
+        CourseInfo noteCourseId = DataManager.getInstance().getCourse(courseId);
+        int courseIndex = courses.indexOf(noteCourseId);//getting index of the course from our notes / position of notes from spinner list
+        mSpinnerCourses.setSelection(courseIndex);
+        mTextNoteTitle.setText(noteTitle);
+        mTextNoteText.setText(noteText);
     }
 
     //A method that gets value of the intents passed to them/gets notes from the extras
@@ -215,7 +269,7 @@ public class NoteActivity extends AppCompatActivity {
 
         saveOriginalNoteValues();//save the original notes of the next note before making changes
 
-        displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
+        displayNote();
 
         invalidateOptionsMenu();//calls the onPrepareOptionsMenu again
 
