@@ -72,7 +72,8 @@ public class DataManager {
             //since the note is related to the CourseInfo, we first get the course in that Id that corresponds to that note
             CourseInfo noteCourse = dm.getCourse(courseId);
 
-            NoteInfo note = new NoteInfo(noteCourse,noteTitle,noteText);
+            NoteInfo note = new NoteInfo(id, noteCourse,noteTitle,noteText);
+
 
             dm.mNotes.add(note);
         }

@@ -63,7 +63,7 @@ public class NoteListActivity extends AppCompatActivity {
                //BEFORE NoteInfo note = (NoteInfo)listNotes.getItemAtPosition(position);//reference to the notes that corresponds to the user selection
                 //putting it as an extra into the intent.intent Extras are name value pairs, and those names of course are strings and when we use those strings we generally want them to be Constants(set at the note activity(destination of the extra))
                 //putting the extra in place, the note chosen is passed to the note activity
-                intent.putExtra(NoteActivity.NOTE_POSITION,position);
+                intent.putExtra(NoteActivity.NOTE_ID,position);
 
                 startActivity(intent);
 

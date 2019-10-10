@@ -36,7 +36,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         viewHolder.mTextCourse.setText(note.getCourse().getTitle());
         viewHolder.mTextTitle.setText(note.getTitle());
 
-        viewHolder.mCurrentPosition = position;//11
+        viewHolder.mId = note.getId();//11
 
     }
 
@@ -49,7 +49,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         //the references to the views
         public final TextView mTextCourse;//7
         public final TextView mTextTitle;
-        public int mCurrentPosition;//10
+        public int mId;//10
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -60,7 +60,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext,NoteActivity.class);
-                    intent.putExtra(NoteActivity.NOTE_POSITION, mCurrentPosition);
+                    intent.putExtra(NoteActivity.NOTE_ID, mId);
                     mContext.startActivity(intent);
                 }
             });
